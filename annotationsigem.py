@@ -61,9 +61,14 @@ def calculate_alignment_scores(long_seq, short_seqs, window_size):
     return all_normalized_scores
 
 def save_normalized_scores(normalized_scores, file_name):
-    
+    num_rows = len(normalized_scores)
     max_length = max(len(scores) for scores in normalized_scores)
-    scores_array = np.full((len(normalized_scores), max_length), np.nan)
+    
+    if num_rows < 10:
+        for _ in range(10 - num_rows):
+            normalized_scores.append([0] * max_length)
+    
+    scores_array = np.zeros((10, max_length))
     
     for i, scores in enumerate(normalized_scores):
         scores_array[i, :len(scores)] = scores
@@ -84,7 +89,8 @@ def process_sequence(seq_id, sequence, blocks, window_size, output_dir):
         output_file = os.path.join(output_dir, f"{seq_id}_prob.npy")
         save_normalized_scores(normalized_scores, output_file)
 
-def main():
+def main():\
+    
     sequences_file = r"sequences.fasta"
     blocks_file = r"blocks.fasta"  
     window_size = 15  # Change if needed
